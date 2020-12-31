@@ -27,12 +27,12 @@ DROP TABLE IF EXISTS `bill`;
 CREATE TABLE `bill` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_Stripe` int(11) NOT NULL,
-  `datePayment` varchar(10) NOT NULL,
+  `datePayment` date NOT NULL,
   `montantHt` int(11) NOT NULL,
   `montantTtc` int(11) NOT NULL,
   `source` varchar(6) NOT NULL,
-  `createdAt` varchar(10) NOT NULL,
-  `updatedAt` varchar(10) NOT NULL,
+  `createdAt` date NOT NULL,
+  `updatedAt` date NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_bill_userid_idx` (`user_id`),
@@ -106,8 +106,8 @@ CREATE TABLE `song` (
   `url` varchar(255) NOT NULL,
   `cover` varchar(255) DEFAULT NULL,
   `time` int(11) NOT NULL,
-  `createdAt` varchar(10) NOT NULL,
-  `updatedAt` varchar(10) NOT NULL,
+  `createdAt` date NOT NULL,
+  `updatedAt` date NOT NULL,
   `type` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_song_type_idx` (`type`),
@@ -144,10 +144,10 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `sexe` varchar(6) NOT NULL,
   `role` int(11) NOT NULL,
-  `dateNaissance` varchar(10) NOT NULL,
-  `createdAt` varchar(10) NOT NULL,
-  `updatedAt` varchar(10) NOT NULL,
-  `subscription` int(11) NOT NULL,
+  `dateNaissance` date NOT NULL,
+  `createdAt` date NOT NULL,
+  `updatedAt` date NOT NULL,
+  `subscription` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_user_role_idx` (`role`),
   CONSTRAINT `fk_user_role` FOREIGN KEY (`role`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -163,4 +163,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-31 15:29:11
+-- Dump completed on 2020-12-31 15:52:08
