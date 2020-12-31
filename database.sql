@@ -18,6 +18,23 @@ USE `apiproject`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `account`
+--
+
+DROP TABLE IF EXISTS `account`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `account` (
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `idUser` int(11) NOT NULL,
+  PRIMARY KEY (`idUser`),
+  KEY `fk_account_userid_idx` (`idUser`),
+  CONSTRAINT `fk_account_iduser` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `bill`
 --
 
@@ -25,18 +42,18 @@ DROP TABLE IF EXISTS `bill`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bill` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idBill` int(11) NOT NULL,
   `id_Stripe` int(11) NOT NULL,
-  `datePayment` varchar(10) NOT NULL,
+  `datePayment` date NOT NULL,
   `montantHt` int(11) NOT NULL,
   `montantTtc` int(11) NOT NULL,
   `source` varchar(6) NOT NULL,
-  `createdAt` varchar(10) NOT NULL,
-  `updatedAt` varchar(10) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_bill_userid_idx` (`user_id`),
-  CONSTRAINT `fk_bill_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  `createdAt` date NOT NULL,
+  `updatedAt` date NOT NULL,
+  `idUser` int(11) NOT NULL,
+  PRIMARY KEY (`idBill`),
+  KEY `fk_account_iduser_idx` (`idUser`),
+  CONSTRAINT `fk_bill_iduser` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -48,15 +65,15 @@ DROP TABLE IF EXISTS `card`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `card` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idCard` int(11) NOT NULL AUTO_INCREMENT,
   `cartNumber` varchar(16) NOT NULL,
   `month` varchar(2) NOT NULL,
   `year` varchar(4) NOT NULL,
   `default` tinyint(4) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_card_userid_idx` (`user_id`),
-  CONSTRAINT `fk_card_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  `idUser` int(11) NOT NULL,
+  PRIMARY KEY (`idCard`),
+  KEY `fk_card_iduser_idx` (`idUser`),
+  CONSTRAINT `fk_card_iduser` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -68,14 +85,13 @@ DROP TABLE IF EXISTS `child`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `child` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `tutor_id` int(11) NOT NULL,
   `child_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`child_id`),
   KEY `fk_child_id_idx` (`tutor_id`),
-  KEY `fk_child_id_idx1` (`child_id`),
-  CONSTRAINT `fk_child_id` FOREIGN KEY (`child_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_tutor_id` FOREIGN KEY (`tutor_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `fk_child_iduserchild_idx` (`child_id`),
+  CONSTRAINT `fk_child_iduserchild` FOREIGN KEY (`child_id`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_child_idusertutor` FOREIGN KEY (`tutor_id`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -87,9 +103,9 @@ DROP TABLE IF EXISTS `role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(15) NOT NULL,
-  PRIMARY KEY (`id`)
+  `idRole` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(15) NOT NULL,
+  PRIMARY KEY (`idRole`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -101,17 +117,17 @@ DROP TABLE IF EXISTS `song`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `song` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idSong` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `url` varchar(255) NOT NULL,
   `cover` varchar(255) DEFAULT NULL,
   `time` int(11) NOT NULL,
-  `createdAt` varchar(10) NOT NULL,
-  `updatedAt` varchar(10) NOT NULL,
-  `type` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_song_type_idx` (`type`),
-  CONSTRAINT `fk_song_type` FOREIGN KEY (`type`) REFERENCES `type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  `createdAt` date NOT NULL,
+  `updatedAt` date NOT NULL,
+  `idType` int(11) NOT NULL,
+  PRIMARY KEY (`idSong`),
+  KEY `fk_song_idType_idx` (`idType`),
+  CONSTRAINT `fk_song_idType` FOREIGN KEY (`idType`) REFERENCES `type` (`idType`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -123,9 +139,9 @@ DROP TABLE IF EXISTS `type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idType` int(11) NOT NULL,
   `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`idType`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -137,21 +153,19 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idUser` int(11) NOT NULL,
   `firstname` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
   `sexe` varchar(6) NOT NULL,
-  `role` int(11) NOT NULL,
-  `dateNaissance` varchar(10) NOT NULL,
-  `createdAt` varchar(10) NOT NULL,
-  `updatedAt` varchar(10) NOT NULL,
-  `subscription` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_user_role_idx` (`role`),
-  CONSTRAINT `fk_user_role` FOREIGN KEY (`role`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `idRole` int(11) NOT NULL,
+  `dateNaissance` date NOT NULL,
+  `createdAt` date NOT NULL,
+  `updatedAt` date NOT NULL,
+  `subscription` tinyint(4) NOT NULL,
+  PRIMARY KEY (`idUser`),
+  KEY `fk_user_role_idx` (`idRole`),
+  CONSTRAINT `fk_user_role` FOREIGN KEY (`idRole`) REFERENCES `role` (`idRole`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -163,4 +177,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-31 15:29:11
+-- Dump completed on 2020-12-31 17:06:49
