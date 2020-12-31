@@ -1,13 +1,11 @@
 export interface UserInterface{
-    id: number;
-    firstname: string;
-    lastname: string;
-    email: string;
-    password: string;
+    idUser: number;
+    prenom: string;
+    nom: string;
     sexe: string;
-    role: number;
-    dateNaissance: any;
-    createdAt: any;
-    updatedAt: any;
-    subscription: boolean;
+    idRole: number;
+    dateNaissance: string;
+    dateCreation: string;
+    dateMaj: string;
+    abonnement: boolean;
 }

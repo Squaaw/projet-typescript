@@ -1,11 +1,11 @@
 export interface BillInterface{
-    id: number;
+    idBill: number;
     id_stripe: number;
-    datePayment: any;
+    datePayment: string;
     montantHt: number;
     montantTtc: number;
     source: string;
-    createdAt: any;
-    updatedAt: any;
-    user_id: number;
+    createdAt: string;
+    updatedAt: string;
+    user_idUser: number;
 }
