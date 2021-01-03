@@ -3,26 +3,26 @@ import Role from './Role';
 export default class User{
 
     protected idUser ? : number | null;
-    public prenom: string | null;
-    public nom: string | null;
-    public sexe: string | null;
-    public idRole: number | null;
-    public dateNaissance: string | null;
-    public dateCreation: string | null;
-    public dateMaj: string | null;
-    public abonnement: boolean | null;
+    public prenom: string;
+    public nom: string;
+    public sexe: string;
+    public idRole: number;
+    public dateNaissance: string;
+    public dateCreation: string;
+    public dateMaj: string;
+    public abonnement: number;
 
     protected table: string = 'user';
 
-    constructor(user: User | null, firstname: string = '', lastname: string = '', sexe: string = '', idRole: number = 1, dateNaissance: string = '', createdAt: string = '', updatedAt: string = '', subscription: boolean = false){
+    constructor(user: User | null, firstname: string = '', lastname: string = '', sexe: string = '', idRole: number = 1, dateNaissance: string = '', dateCreation: string = '', dateMaj: string = '', subscription: number = 0){
         if (user === null){
             this.prenom = firstname;
             this.nom = lastname;
             this.sexe = sexe;
             this.idRole = idRole;
             this.dateNaissance = dateNaissance;
-            this.dateCreation = createdAt;
-            this.dateMaj = updatedAt;
+            this.dateCreation = dateCreation;
+            this.dateMaj = dateMaj;
             this.abonnement = subscription;
         } else {
             this.idUser = user.id;
@@ -45,11 +45,11 @@ export default class User{
         return <string>this.prenom;
     }
 
-    get name(): string{
+    get lastname(): string{
         return <string>this.nom;
     }
 
-    get genre(): string{
+    get gender(): string{
         return <string>this.sexe;
     }
 
@@ -69,8 +69,8 @@ export default class User{
         return <string>this.dateMaj;
     }
 
-    get subscription(): boolean{
-        return <boolean>this.abonnement;
+    get subscription(): number{
+        return <number>this.abonnement;
     }
 
     get attributInsert(): Array <string> {
