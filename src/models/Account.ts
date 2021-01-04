@@ -14,12 +14,6 @@ export default class Account extends User {
 
         super(id); // lance le constructeur du parent (User)
 
-        if (EmailException.checkEmail(email))
-            throw new EmailException;
-
-        if (!PasswordException.isValidPassword(password))
-            throw new PasswordException();
-
         this.email = email;
         this.password = password;
         this.user_idUser = this.id;
