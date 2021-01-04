@@ -5,6 +5,8 @@ import { decode, sign } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import Role from "../models/Role";
 import DateException from "../exception/DateException";
+import { isNullOrEmpty, split } from '../middlewares/auth.middleware';
+import { verify } from 'jsonwebtoken';
 
 export class AuthController {
     static register = async(req: Request, res: Response) => {
@@ -137,5 +139,51 @@ export class AuthController {
                 return res.status(429).json({error: true, message: errStr}).end();
             }
         }
+    }
+
+    static user = async(req: Request, res: Response) => {
+
+        let data: any = req.body;
+        let token: any = req.headers.authorization;
+
+        try{
+            if (token)
+                token = await verify(split(token), <string>process.env.JWT_KEY);
+
+            const userId = token.id;
+            let updated = false;
+
+            // Since data are optionals, it is necessary to check which values are received in order to prevent updating empty fields.
+
+            if (!isNullOrEmpty(data.firstname)){
+                User.update({ firstname: data.firstname}, { idUser: userId });
+                updated = true;
+            }
+    
+            if (!isNullOrEmpty(data.lastname)){
+                User.update({ lastname: data.lastname}, { idUser: userId });
+                updated = true;
+            }
+    
+            if (!isNullOrEmpty(data.date_naissance)){
+                User.update({ birthdate: data.date_naissance}, { idUser: userId });
+                updated = true;
+            }
+    
+            if (!isNullOrEmpty(data.sexe)){
+                User.update({ gender: data.sexe}, { idUser: userId });
+                updated = true;
+            }
+
+            // Set 'updatedAt' field with current date
+            if (updated)
+                User.update({ updatedAt: DateException.formatDate(new Date())}, {idUser: userId});
+
+            return res.status(200).json({error: false, message: "Vos données ont été mises à jour"});
+
+        } catch (err){
+            console.log(err);
+        }
+        
     }
 }
