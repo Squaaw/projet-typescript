@@ -62,6 +62,58 @@ export default class MySQL {
         })
     }
 
+    static update(table: listeTables, update: any, where: any): any {
+        return new Promise((resolve, reject) => {
+
+            const bdd: Connection = createConnection({
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASS,
+                database: process.env.DB_DATABASE,
+                port: parseInt((process.env.PORTMYSQL === undefined) ? '3306' : process.env.PORTMYSQL)
+            })
+
+            bdd.connect(err => {
+                if (err)
+                    console.log('Connection database error');
+            })
+
+            let dataWhere = [];
+            let dataUpdate = [];
+            let conditionWhere = "";
+            let conditionUpdate = "";
+
+            for (const key in update) {
+                conditionUpdate += "`" + key + "` = ?, ";
+                dataUpdate.push(update[key]);
+            }
+
+            for (const key in where) {
+                conditionWhere += "`" + key + "` LIKE ? and ";
+                dataWhere.push(where[key])
+            }
+
+            conditionUpdate = conditionUpdate.slice(0, -2);
+            conditionWhere = conditionWhere.slice(0, -5);
+
+            // console.log(`UPDATE ${table} SET ${conditionUpdate} WHERE ${conditionWhere} ;`);
+            // console.log(dataUpdate);
+            // console.log(dataWhere);
+
+            // Known issue: when there are more than two parameters wether in the conditionUpdate or the conditionWhere, the SQL syntax is wrong! Temporary fix: call the method with only one parameter at a time...
+            bdd.query(`UPDATE ${table} SET ${conditionUpdate} WHERE ${conditionWhere} ;`, [dataUpdate, dataWhere], (error, results, fields) => {
+                if (error){
+                    reject(error);
+                    console.log(error);                   
+                }
+                else
+                    resolve(results);
+
+                bdd.end();
+            });
+        })
+    }
+
     static selectJoin(table: listeTables, join: Array<jointureInterface> , where ?: any): any {
         return new Promise((resolve, reject) => {
 

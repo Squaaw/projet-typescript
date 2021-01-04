@@ -4,4 +4,6 @@ export interface AccountInterface extends UserInterface{
     user_idUser: number | null | undefined;
     email: string;
     password: string;
+    attempts: number;
+    blockedAttemptsDate: Date;
 }

@@ -18,7 +18,7 @@ interface attributSelectInterface {
     },
     "account": {
         primaryKey: `idUser`,
-        attribut: [`email`, `password`, `idUser`]
+        attribut: [`email`, `password`, `idUser`, `attempts`, `blockedAttemptsDate`]
     },
     "role": {
         primaryKey: `idRole`,

@@ -1,5 +1,6 @@
 import Role from './Role';
 import MySQL from '../db/MySQL';
+import DateException from '../exception/DateException';
 
 export default class User{
 
@@ -97,9 +98,9 @@ export default class User{
             MySQL.select('user', where).then((arrayUser: Array<any>) => {
                 let data: Array<User> = [];
                 for (const user of arrayUser) {
-                    user.birthdate = new String(user.birthdate);
-                    user.createdAt = new String(user.createdAt);
-                    user.updatedAt = new String(user.updatedAt);
+                    user.birthdate = DateException.formatDate(user.birthdate);
+                    user.createdAt = DateException.formatDate(user.createdAt);
+                    user.updatedAt = DateException.formatDate(user.updatedAt);
                     user.id = user.idUser;
                     data.push(new User(user));
                 }
@@ -112,5 +113,18 @@ export default class User{
                 reject(false);
             });
         })
+    }
+
+    static update(update: any, where: any) {
+        return new Promise((resolve, reject) => {
+            MySQL.update('user', update, where).then(() => {
+                console.log("Updated successfully!");
+                resolve(true);
+            })
+            .catch((err: any) => {
+                console.log(err);
+                reject(false);
+            });
+        });
     }
 }
