@@ -26,12 +26,15 @@ export class AuthController {
             const account = new Account(user, data.email, password);
             await account.save();
 
-            const theToken: any = await sign({ id: user.id, name: user.lastname }, <string>process.env.JWT_KEY, {expiresIn: '5m'})
+            const theToken: any = await sign({ id: user.id, firstname: user.prenom }, <string>process.env.JWT_KEY, {expiresIn: '5m'});
 
             const token = {
                 token: theToken,
                 expired: await (<any> decode(theToken)).exp
             }
+            
+            console.log('token: ' + token.token);
+            console.log('expired at: ' + token.expired);
 
             const role: any = await Role.select({ idRole: user.idRole});
 
@@ -39,15 +42,15 @@ export class AuthController {
                 error: false,
                 message: "L'utilisateur a bien été créé avec succès",
                 user: {
-                    firstname: user.firstname,
-                    lastname: user.lastname,
+                    firstname: user.prenom,
+                    lastname: user.nom,
                     email: account.email,
-                    sexe: user.gender,
+                    sexe: user.sexe,
                     role: role[0].name,
-                    dateNaissance: user.birthdate,
+                    dateNaissance: user.dateNaiss,
                     createdAt: user.creationDate,
                     updatedAt: user.updatedDate,
-                    subscription: user.subscription
+                    subscription: user.abonnement
                 }
             });
 

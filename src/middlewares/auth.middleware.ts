@@ -2,6 +2,7 @@ import { verify } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import EmailException from "../exception/EmailException";
 import PasswordException from "../exception/PasswordException";
+import DateException from '../exception/DateException';
 
 const split = (token: string) => { return token.split('Bearer ').join('') }
 
@@ -14,7 +15,7 @@ export const authMidd = (req: Request, res: Response, next: () => void) => {
         else
             throw new Error(`Vous n'êtes pas abilité à accéder à ce contenu.`);
     } catch (err) {
-        return res.status(401).json({ error: true, message: err.message }).end();
+        return res.end('<h1>404 not found!</h1>');
     }
 }
 
@@ -38,10 +39,13 @@ export const registerMidd = (req: any, res: any, next: () => void) => {
                 throw new Error('400');
         }
 
-        if (EmailException.checkEmail(data.email))
+        if (!EmailException.checkEmail(data.email))
             throw new Error('409');
     
         if (!PasswordException.isValidPassword(data.password))
+            throw new Error('409');
+
+        if (!DateException.checkDate(data.date_naissance))
             throw new Error('409');
 
         next();
