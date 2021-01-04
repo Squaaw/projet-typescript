@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import EmailException from "../exception/EmailException";
 import PasswordException from "../exception/PasswordException";
 import DateException from '../exception/DateException';
+import Account from '../models/Account';
 
 const split = (token: string) => { return token.split('Bearer ').join('') }
 
@@ -57,6 +58,35 @@ export const registerMidd = (req: any, res: any, next: () => void) => {
 
         if (err.message == '409'){
             return res.status(409).json({error: true, message: "Une ou plusieurs données sont erronées"}).end();
+        }
+    }
+}
+
+export const loginMidd = async(req: any, res: any, next: () => void) => {
+
+    let data: any = req.body;
+    const requiredFields = ['Email', 'Password'];
+
+    try{
+        let error: boolean = true;
+
+        for (const required in requiredFields){
+            error = true;
+
+            for (const field in data){
+                if(field === requiredFields[required])
+                    error = false;
+            }
+
+            if (error)
+                throw new Error('400');
+        }
+
+        next();
+
+    } catch(err) {
+        if (err.message == '400'){
+            return res.status(400).json({error: true, message: "Email/password manquants"}).end();
         }
     }
 }
