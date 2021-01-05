@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { AuthController } from '../controller/AuthController';
-import { registerMidd, loginMidd, authMidd } from '../middlewares/auth.middleware';
+import { registerMidd, loginMidd } from '../middlewares/auth.middleware';
+import { Request, Response } from 'express';
 
 const route: Router = Router();
 
-route.get('/', authMidd, (req: any, res: any) => {
-    return res.end('<h1>You signed in correctly!</h1>');
+route.get('/', (req: Request, res: Response) => {
+    try{ return res.end('<h1>Welcome to Zoubify!</h1>'); }
+    catch{ return res.end('<h1>404 not found!</h1>'); }
 })
 
 route.post('/register', registerMidd, AuthController.register);
