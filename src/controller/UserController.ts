@@ -5,10 +5,11 @@ import DateException from "../exception/DateException";
 import { verify } from 'jsonwebtoken';
 import TokenException from "../exception/TokenException";
 import StringException from "../exception/StringException";
+import Blacklist from "../models/Blacklist";
 
 export class UserController {
 
-    static user = async(req: Request, res: Response) => {
+    static update = async(req: Request, res: Response) => {
 
         let data: any = req.body;
         let token: any = req.headers.authorization;
@@ -49,6 +50,21 @@ export class UserController {
             return res.status(200).json({error: false, message: "Vos données ont été mises à jour"});
     
         } catch (err){
+            console.log(err);
+        }
+    }
+
+    static signOut = async(req: Request, res: Response) => {
+
+        try{
+            // Add current valid token to the blacklist in order not to use this token. User needs to login again to get another token once disconnected.
+            const token = TokenException.split(<string>req.headers.authorization);
+            const blacklist = new Blacklist(null, token);
+            await blacklist.save();
+
+            return res.status(200).json({error: false, message: "L'utilisateur a été déconnecté avec succès"});
+        }
+        catch (err){
             console.log(err);
         }
     }

@@ -2,8 +2,9 @@ import { verify } from "jsonwebtoken";
 import DateException from "../exception/DateException";
 import StringException from "../exception/StringException";
 import TokenException from "../exception/TokenException";
+import { Request, Response } from 'express';
 
-export const userMidd = (req: any, res: any, next: () => void) => {
+export const updateMidd = (req: any, res: any, next: () => void) => {
 
     let data: any = req.body;
     const dateNaiss = data.date_naissance;
@@ -46,5 +47,17 @@ export const userMidd = (req: any, res: any, next: () => void) => {
         if (err.message == '409'){
             return res.status(409).json({error: true, message: "Une ou plusieurs données sont erronées"}).end();
         }
+    }
+}
+
+export const signOutMidd = (req: Request, res: Response, next: () => void) => {   
+    try{
+        if (req.headers.authorization && verify(TokenException.split(req.headers.authorization), <string>process.env.JWT_KEY))
+            return next();
+        else
+            throw new Error();
+    }
+    catch (err){
+        return res.status(401).json({error: true, message: "Votre token n'est pas correct"}).end();
     }
 }
