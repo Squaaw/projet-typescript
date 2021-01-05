@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import DateException from "../exception/DateException";
 import { verify } from 'jsonwebtoken';
 import TokenException from "../exception/TokenException";
-import StringException from "../exception/StringException";
 import Blacklist from "../models/Blacklist";
 
 export class UserController {
@@ -23,22 +22,22 @@ export class UserController {
     
             // Since data are optionals, it is necessary to check which values are received in order to prevent updating empty fields.
     
-            if (!StringException.isNullOrEmpty(data.firstname)){
+            if (data.firstname){
                 User.update({ firstname: data.firstname}, { idUser: userId });
                 updated = true;
             }
     
-            if (!StringException.isNullOrEmpty(data.lastname)){
+            if (data.lastname){
                 User.update({ lastname: data.lastname}, { idUser: userId });
                 updated = true;
             }
     
-            if (!StringException.isNullOrEmpty(data.date_naissance)){
+            if (data.date_naissance){
                 User.update({ birthdate: data.date_naissance}, { idUser: userId });
                 updated = true;
             }
     
-            if (!StringException.isNullOrEmpty(data.sexe)){
+            if (data.sexe){
                 User.update({ gender: data.sexe}, { idUser: userId });
                 updated = true;
             }
@@ -57,7 +56,7 @@ export class UserController {
     static signOut = async(req: Request, res: Response) => {
 
         try{
-            // Add current valid token to the blacklist in order not to use this token. User needs to login again to get another token once disconnected.
+            // Add current valid token to the blacklist in order not to use this token. User needs to log in again to get another token once disconnected.
             const token = TokenException.split(<string>req.headers.authorization);
             const blacklist = new Blacklist(null, token);
             await blacklist.save();
