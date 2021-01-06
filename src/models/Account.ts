@@ -1,6 +1,4 @@
 import User from "./User";
-import EmailException from "../exception/EmailException";
-import PasswordException from "../exception/PasswordException";
 import MySQL, { jointureInterface } from "../db/MySQL";
 import DateException from "../exception/DateException";
 
