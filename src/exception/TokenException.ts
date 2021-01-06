@@ -15,7 +15,6 @@ export default class TokenException extends Error{
         if (headerAuthorization && verify(TokenException.split(headerAuthorization), <string>process.env.JWT_KEY)){        
             // Check if the current token is blacklisted (if the user logged out before the token expiration time)          
             const isTokenBlacklisted = await Blacklist.isExiste(TokenException.split(headerAuthorization));
-            console.log(isTokenBlacklisted);
             if (!isTokenBlacklisted) return true;
         }
 
