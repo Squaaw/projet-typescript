@@ -180,5 +180,38 @@ export class UserController {
             return res.status(400).json({error: true, message: "Une ou plusieurs données obligatoire sont manquantes"}).end();
         }
     }
+
+    static removeUser = async(req: Request, res: Response) => {
+
+        let token: any = req.headers.authorization;
+        let i: number;
+
+        try{
+            token = verify(TokenException.split(token), <string>process.env.JWT_KEY);   
+            const userId = token.id;
+
+            // Check if the user is a tutor and has children linked to this account in order to delete the children accounts in the first place (even though foreign keys are ON CASCADE DELETE, it won't delete children accounts from user).
+            const childCount: any = await Child.select({ tutor_id: userId});
+
+            if (childCount.length > 0){
+                for (i = 0; i < childCount.length; i++){
+                    await User.delete({ idUser: childCount[i].child_id});
+                }
+            }
+
+            // Delete the user account (tutor or child).
+            await User.delete({ idUser: userId});
+
+            // Add the curent token to the blacklist to prevent current user to use it again.
+            token = TokenException.split(<string>req.headers.authorization);
+            const blacklist = new Blacklist(null, token);
+            await blacklist.save();
+
+            return res.status(200).json({ error: false, message: "Votre compte a été supprimée avec succès" });
+
+        } catch (err){
+            console.log(err);
+        }
+    }
 }
 

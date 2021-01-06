@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { UserController } from '../controller/UserController';
-import { updateMidd, signOutMidd, addChildMidd, removeChildMidd, getChildMidd } from '../middlewares/user.middleware';
+import { updateMidd, signOutMidd, addChildMidd, removeChildMidd, getChildMidd, removeUserMidd } from '../middlewares/user.middleware';
 
 const route: Router = Router();
 
@@ -18,5 +18,8 @@ route.delete('/child', removeChildMidd, UserController.removeChild);
 
 // Get children account data
 route.get('/child', getChildMidd, UserController.getChild);
+
+// Remove a user account
+route.delete('/', removeUserMidd, UserController.removeUser);
 
 export { route as UserRoute }
