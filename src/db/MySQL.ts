@@ -221,4 +221,43 @@ export default class MySQL {
         })     
     }
 
+    static delete(table: listeTables, where ?: any): any {
+        return new Promise((resolve, reject) => {
+
+            const bdd: Connection = createConnection({
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASS,
+                database: process.env.DB_DATABASE,
+                port: parseInt((process.env.PORTMYSQL === undefined) ? '3306' : process.env.PORTMYSQL)
+            })
+
+            bdd.connect(err => {
+                if (err)
+                    console.log('Connection database error');
+            })
+
+            let data = [];
+            let conditionWhere = "";
+
+            for (const key in where) {
+                conditionWhere += "`" + key + "` = ? and ";
+                data.push(where[key])
+            }
+
+            conditionWhere = conditionWhere.slice(0, -5);
+
+            bdd.query(`DELETE FROM ${table} WHERE ${conditionWhere} ;`, [data], (error, results, fields) => {
+                if (error){
+                    reject(error);
+                    console.log(error);                   
+                }
+                else
+                    resolve(results);
+
+                bdd.end();
+            });
+        })
+    }
+
 }

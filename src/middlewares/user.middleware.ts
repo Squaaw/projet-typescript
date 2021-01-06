@@ -146,3 +146,49 @@ export const addChildMidd = async(req: Request, res: Response, next: () => void)
         return res.status(403).json({error: true, message: "Vos droits d'accès ne permettent pas d'accéder à la ressource"}).end();
     }
 }
+
+export const removeChildMidd = async(req: Request, res: Response, next: () => void) => {
+    let data: any = req.body;
+    let token: any = req.headers.authorization;
+
+    try{
+        // Check if current token is valid
+        const isTokenValid = await TokenException.isTokenValid(token);
+
+        if (!isTokenValid)
+            throw new Error('401');
+
+        token = verify(TokenException.split(token), <string>process.env.JWT_KEY);   
+        const userId = token.id;
+        const user: any = await User.select({ idUser: userId});
+
+        // If role is neither tutor nor administrator, throw error (removing a child account is forbidden for children)
+        if (user[0].idRole == 2)
+            throw new Error('forbidden');
+            
+        const childId = data.id_child;
+
+        // If id_child field is empty, throw error
+        if (!childId)
+            throw new Error('wrongId');
+        
+        // If child does not exist in database, throw error
+        const child: any = await Child.select({ child_id: childId});
+        if (child.length == 0)
+            throw new Error('wrongId');
+        
+        next();
+
+    } catch (err){
+        if (err.message == 'forbidden'){
+            return res.status(403).json({error: true, message: "Vos droits d'accès ne permettent pas d'accéder à la ressource"}).end();
+        }
+
+        if (err.message == 'wrongId'){
+            return res.status(403).json({error: true, message: "Vous ne pouvez pas supprimer cet enfant"}).end();
+        }
+
+        // Default error is 401 if none of the above error was catched
+        return res.status(401).json({error: true, message: "Votre token n'est pas correct"}).end();
+    }
+}

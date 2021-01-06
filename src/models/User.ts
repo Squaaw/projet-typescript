@@ -127,4 +127,16 @@ export default class User{
             });
         });
     }
+
+    static delete(where: any): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            MySQL.delete('user', where).then(() => {
+                resolve(true);
+            })
+            .catch((err: any) => {
+                console.log(err);
+                reject(false);
+            });
+        })
+    }
 }

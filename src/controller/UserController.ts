@@ -122,5 +122,22 @@ export class UserController {
             return res.status(403).json({error: true, message: "Vos droits d'accès ne permettent pas d'accéder à la ressource"}).end();
         }
     }
+
+    static removeChild = async(req: Request, res: Response) => {
+
+        let data: any = req.body;
+
+        try{
+            const isRemoved: boolean = await User.delete({ idUser: data.id_child});
+
+            if (!isRemoved)
+                throw new Error('403');
+
+            return res.status(201).json({ error: false, message: "L'utilisateur a été supprimée avec succès" });
+
+        } catch(err) {
+            return res.status(403).json({error: true, message: "Vous ne pouvez pas supprimer cet enfant"}).end();
+        }
+    }
 }
 
