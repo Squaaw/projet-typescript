@@ -139,5 +139,46 @@ export class UserController {
             return res.status(403).json({error: true, message: "Vous ne pouvez pas supprimer cet enfant"}).end();
         }
     }
+
+    static getChild = async(req: Request, res: Response) => { 
+
+        let token: any = req.headers.authorization;
+
+        try{
+            token = verify(TokenException.split(token), <string>process.env.JWT_KEY);   
+            const tutorId = token.id;
+            const child: any = await Child.select({ tutor_id: tutorId });
+
+            // This means there is no existing child account for the current tutor.
+            if (child.length == 0)
+                throw new Error('400');
+
+            let i: number;
+            let userData: Array<any> = [];
+
+            for (i = 0; i < child.length; i++){
+                const role: any = await Role.select({ idRole: child[i].idRole});
+                const user: any = {
+                    firstname: child[i].firstname,
+                    lastname: child[i].lastname,
+                    sexe: child[i].gender,
+                    role: role[0].name,
+                    dateNaissance: child[i].birthdate,
+                    createdAt: child[i].createdAt,
+                    updateAd: child[i].updatedAt,
+                    subscription: child[i].subscription
+                }
+                userData.push(user);
+            }
+
+            return res.status(200).json({
+                error: false,
+                users: userData
+            });
+
+        } catch (err) {
+            return res.status(400).json({error: true, message: "Une ou plusieurs données obligatoire sont manquantes"}).end();
+        }
+    }
 }
 
