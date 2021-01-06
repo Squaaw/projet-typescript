@@ -64,6 +64,45 @@ export default class MySQL {
         })
     }
 
+    static selectAll(table: listeTables): any {
+        return new Promise((resolve, reject) => {
+
+            const bdd: Connection = createConnection({
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASS,
+                database: process.env.DB_DATABASE,
+                port: parseInt((process.env.PORTMYSQL === undefined) ? '3306' : process.env.PORTMYSQL)
+            })
+
+            bdd.connect(err => {
+                if (err)
+                    console.log('Connection database error');
+            })
+
+            let columns = "";
+
+            const key = listAttributSelect[table].attribut;
+
+            for (const champs of key) {
+                columns += "`" + champs + "`,";
+            }
+            
+            columns = columns.slice(0, -1);
+
+            bdd.query(`SELECT ${columns} FROM ${table} ;`, (error, results, fields) => {
+                if (error){
+                    reject(error);
+                    console.log(error);                   
+                }
+                else
+                    resolve(results);
+
+                bdd.end();
+            });
+        })
+    }
+
     static update(table: listeTables, update: any, where: any): any {
         return new Promise((resolve, reject) => {
 

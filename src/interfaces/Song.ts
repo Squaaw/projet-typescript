@@ -1,7 +1,6 @@
 export interface SongInterface{
     idSong: number;
     name: string;
-    url: string;
     cover: string;
     time: number;
     createdAt: string;
