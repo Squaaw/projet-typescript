@@ -1,4 +1,4 @@
-export type listeTables = "user" | "account" | "role" | "blacklist";
+export type listeTables = "user" | "account" | "role" | "blacklist" | "child";
 
 interface attributSelectInterface {
     primaryKey: string;
@@ -27,6 +27,10 @@ interface attributSelectInterface {
     "blacklist": {
         primaryKey: `idToken`,
         attribut: [`idToken`, `token`]
+    },
+    "child": {
+        primaryKey: `child_id`,
+        attribut: [`child_id`, `tutor_id`]
     },
 };
 
