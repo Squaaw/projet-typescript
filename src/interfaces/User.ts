@@ -1,11 +1,11 @@
 export interface UserInterface{
     idUser: number;
-    prenom: string;
-    nom: string;
-    sexe: string;
+    firstname: string;
+    lastname: string;
+    gender: string;
     idRole: number;
-    dateNaissance: string;
-    dateCreation: string;
-    dateMaj: string;
-    abonnement: boolean;
+    birthdate: string;
+    createdAt: string;
+    updatedAt: string;
+    subscription: boolean;
 }
