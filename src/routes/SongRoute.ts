@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { SongController } from '../controller/SongController';
-import { getSongsMidd } from '../middlewares/song.middleware';
+import { getSongsMidd, getSongByIdMidd } from '../middlewares/song.middleware';
 
 const route: Router = Router();
 
 // Get all songs
 route.get('/', getSongsMidd, SongController.getSongs);
 
-// route.get('/songs/:id')
-// route.get('/songs/{id}')
+// Get a song data by id
+route.get('/:id', getSongByIdMidd, SongController.getSongById);
 
 export { route as SongRoute }

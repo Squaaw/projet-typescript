@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
-import { verify } from "jsonwebtoken";
-import TokenException from "../exception/TokenException";
 import Song from '../models/Song';
 import Type from '../models/Type';
 
-export class SongController { 
+export class SongController {
     
     static getSongs = async(req: Request, res: Response) => {
 
@@ -18,21 +16,12 @@ export class SongController {
                 const type: any = await Type.select({ idType: songs[i].type_idType});
                 const url = "http://localhost:8081/songs/" + songs[i].idSong;
 
-                // Convert duration time from seconds to mm:ss
-                const time = songs[i].time;
-                const minutes = Math.floor(time / 60);
-                const seconds = time - minutes * 60;
-
-                const mm = (minutes.toString().length == 1) ? '0' + minutes : minutes;
-                const ss = (seconds.toString().length == 1) ? '0' + seconds : seconds;
-                const duration = mm + ":" + ss;
-
                 const song: any = {
                     id: songs[i].idSong,
                     name: songs[i].name,
                     url: url,
                     cover: songs[i].cover,
-                    time: duration,
+                    time: songs[i].time,
                     createdAt: songs[i].createdAt,
                     updateAt: songs[i].updatedAt,
                     type: type[0].name
@@ -48,6 +37,33 @@ export class SongController {
         } catch (err) {
             console.log(err);
         }
+    }
 
+    static getSongById = async(req: Request, res: Response) => {
+
+        const songId: any = req.params.id
+
+        try{
+            const song: any = await Song.select({ idSong: songId});
+            const url = "http://localhost:8081/songs/" + songId;
+            const type: any = await Type.select({ idType: song[0].type_idType });
+
+            return res.status(201).json({
+                error: false,
+                song: {
+                    id: song[0].idSong,
+                    name: song[0].name,
+                    url: url,
+                    cover: song[0].cover,
+                    time: song[0].time,
+                    createdAt: song[0].createdAt,
+                    updateAd: song[0].updatedAt,
+                    type: type[0].name
+                }
+            });
+
+        } catch (err) {
+            console.log(err);
+        }
     }
 }

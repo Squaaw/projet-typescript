@@ -7,14 +7,14 @@ export default class Song{
     protected idSong ?: number | null;
     public name: string;
     public cover: string;
-    public time: number;
+    public time: string;
     public createdAt: string;
     public updatedAt: string;
     public type_idType: number;
 
     protected table: string = 'song';
 
-    constructor(song: Song | null, name: string = '', cover: string = '', time: number = 1, createdAt: string = '', updatedAt: string = '', type_idType: number = 1){
+    constructor(song: Song | null, name: string = '', cover: string = '', time: string = '', createdAt: string = '', updatedAt: string = '', type_idType: number = 1){
         if (song === null){
             this.name = name;
             this.cover = cover;
@@ -45,8 +45,8 @@ export default class Song{
         return <string>this.cover;
     }
 
-    get duration(): number{
-        return <number>this.time;
+    get duration(): string{
+        return <string>this.time;
     }
 
     get creationDate(): string{
@@ -61,6 +61,18 @@ export default class Song{
         return new Type(<number>this.type_idType).nom;
     }
 
+    // Convert duration time from seconds to mm:ss
+    static duration(time: number){
+        const minutes = Math.floor(time / 60);
+        const seconds = time - minutes * 60;
+
+        const mm = (minutes.toString().length == 1) ? '0' + minutes : minutes;
+        const ss = (seconds.toString().length == 1) ? '0' + seconds : seconds;
+        const duration = mm + ":" + ss;
+
+        return duration;
+    }
+
     static select(where: any) {
         return new Promise((resolve, reject) => {
             MySQL.select('song', where).then((arraySong: Array<any>) => {
@@ -70,6 +82,7 @@ export default class Song{
                     song.updatedAt = DateException.formatDate(song.updatedAt);
                     song.id = song.idSong;
                     song.type_idType = song.idType;
+                    song.time = this.duration(song.time);
                     data.push(new Song(song));
                 }
 
@@ -92,6 +105,7 @@ export default class Song{
                     song.updatedAt = DateException.formatDate(song.updatedAt);
                     song.id = song.idSong;
                     song.type_idType = song.idType;
+                    song.time = this.duration(song.time);
                     data.push(new Song(song));
                 }
 
