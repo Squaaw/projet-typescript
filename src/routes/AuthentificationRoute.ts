@@ -4,11 +4,12 @@ import { registerMidd, loginMidd } from '../middlewares/auth.middleware';
 import { Request, Response } from 'express';
 
 const route: Router = Router();
+const path = require('path');
 
 // Main route
 route.get('/', (req: Request, res: Response) => {
-    try{ return res.end('<h1>Welcome to Zoubify!</h1>'); }
-    catch{ return res.end('<h1>404 not found!</h1>'); }
+    const indexPath = path.resolve("./index.html");
+    res.sendFile(indexPath);
 })
 
 // Sign Up a new user

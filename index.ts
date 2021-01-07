@@ -22,6 +22,10 @@ app.use('/user', UserRoute);
 // Songs routes.
 app.use('/songs', SongRoute);
 
+app.get('*', function(req, res){
+    return res.end('<h1>404! not found</h1>');
+  });
+
 app.listen(process.env.PORT, () => {
     console.log(`Server run to http://localhost:${process.env.PORT}`);
 });
