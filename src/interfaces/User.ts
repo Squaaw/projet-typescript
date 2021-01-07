@@ -8,4 +8,5 @@ export interface UserInterface{
     createdAt: string;
     updatedAt: string;
     subscription: boolean;
+    stripe_customerId: string | null;
 }

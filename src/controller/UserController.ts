@@ -8,6 +8,7 @@ import Blacklist from "../models/Blacklist";
 import PasswordException from "../exception/PasswordException";
 import Child from "../models/Child";
 import Role from "../models/Role";
+import Stripe from "stripe";
 
 export class UserController {
 
@@ -211,6 +212,109 @@ export class UserController {
 
         } catch (err){
             console.log(err);
+        }
+    }
+
+    static addCard = async(req: Request, res: Response) => {
+
+        // // Charge a customer via the customer id
+        // await stripe.charges.create({
+        //         amount: 1499,
+        //         currency: 'eur',
+        //         customer: customer.id,
+        //          description: 'Abonnement Zoubify'
+        //     });
+
+        // charge.succeeded
+        // charge.failed
+
+    
+        const data: any = req.body;
+        const cardNumber: String = data.cartNumber;
+        const month: number = data.month;
+        const year: number = data.year;
+        const isDefaultSource = data.default;
+
+        let token: any = req.headers.authorization;
+
+        try{
+            token = verify(TokenException.split(token), <string>process.env.JWT_KEY);   
+            const userId = token.id;
+            const user: any = await Account.select({ idUser: userId});
+            const stripe_customerId = user[0].stripe_customerId;
+            const userName = user[0].firstname + ' ' + user[0].lastname;
+            const userMail = user[0].email;
+
+            // Stripe secret key
+            const SECRET_KEY = <string>process.env.STRIPE_SECRET_KEY;   
+            const stripe = require('stripe')(SECRET_KEY);
+
+            // Create a custom token according to card data
+            const cardToken = await stripe.tokens.create({
+                card: {
+                    number: cardNumber,
+                    exp_month: month,
+                    exp_year: year,
+                    // cvc: '314'
+                },
+            });
+
+            // Check if current user has already an existing stripe account (if he has already registered a card)
+            if (stripe_customerId) {
+
+                // Retrieve all the current user's registered cards.
+                const cards: any = await stripe.customers.listSources(
+                    stripe_customerId,
+                    {object: 'card'}
+                );
+        
+                // If the exact fingerprint value is found, it means the current card already exists. The fingerprint uniquely identifies this particular card number.
+                for (let i = 0; i < cards.data.length; i++){
+                    if (cards.data[i].fingerprint === cardToken.card.fingerprint){
+                        throw new Error('409');
+                    }
+                }
+
+                // Add the card to the existing stripe user account
+                const newCard = await stripe.customers.createSource(
+                    stripe_customerId,
+                    {
+                        source: cardToken.id
+                    }
+                );
+
+                // Set as default card according to data.default field
+                if (isDefaultSource === 'true'){
+                    await stripe.customers.update(
+                        stripe_customerId,
+                        {
+                          default_source: newCard.id
+                        }
+                    );
+                }
+            } else {
+                // When this part of the code is reached, it means the user never registered any card. Then a stripe customer account will be created for this user.          
+                const desc = 'User #' + userId + ': ' + userName;
+
+                // Set params which contain the user info and the custom token created previously
+                const params: Stripe.CustomerCreateParams = {
+                    description: desc,
+                    source: cardToken.id,
+                    email: userMail
+                };
+
+                // Create a new stripe user
+                const customer: Stripe.Customer = await stripe.customers.create(params);
+                User.update({ stripe_customerId: customer.id}, {idUser: userId });
+            }
+
+            return res.status(200).json({ error: false, message: "Vos données ont été mises à jour" });
+
+        } catch (err) {
+             if (err.message == '409')
+                return res.status(409).json({error: true, message: "La carte existe déjà"}).end();
+
+                return res.status(402).json({error: true, message: "Informations bancaire incorrectes"}).end();
         }
     }
 }

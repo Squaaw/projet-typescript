@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { UserController } from '../controller/UserController';
-import { updateMidd, signOutMidd, addChildMidd, removeChildMidd, getChildMidd, removeUserMidd } from '../middlewares/user.middleware';
+import { updateMidd, signOutMidd, addChildMidd, removeChildMidd, getChildMidd, removeUserMidd, addCardMidd } from '../middlewares/user.middleware';
 
 const route: Router = Router();
 
@@ -21,5 +21,8 @@ route.get('/child', getChildMidd, UserController.getChild);
 
 // Remove a user account
 route.delete('/', removeUserMidd, UserController.removeUser);
+
+// Adding a credit card
+route.put('/cart', addCardMidd, UserController.addCard);
 
 export { route as UserRoute }

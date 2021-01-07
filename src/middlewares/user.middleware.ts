@@ -234,3 +234,55 @@ export const removeUserMidd = async(req: Request, res: Response, next: () => voi
         return res.status(401).json({error: true, message: "Votre token n'est pas correct"}).end();
     }
 }
+
+export const addCardMidd = async(req: Request, res: Response, next: () => void) => {
+
+    let data: any = req.body;
+    let token: any = req.headers.authorization;
+    const requiredFields = ['cartNumber', 'month', 'year', 'default'];
+
+    try{
+        const isTokenValid = await TokenException.isTokenValid(token);
+
+        if (!isTokenValid)
+            throw new Error('401');
+
+        token = verify(TokenException.split(token), <string>process.env.JWT_KEY);   
+        const userId = token.id;
+        const user: any = await User.select({ idUser: userId});
+
+        // If role is neither tutor nor administrator, throw error (adding a credit card is forbidden for children)
+        if (user[0].idRole == 2)
+            throw new Error('403');
+
+        let error: boolean = true;
+
+        for (const required in requiredFields){
+            error = true;
+
+            for (const field in data){
+                if(field === requiredFields[required])
+                    error = false;
+            }
+
+            // Check if all required fields are set
+            if (error)
+                throw new Error('409');
+        }
+
+        // Default source is either false or true
+        if (data.default !== 'true' && data.default !== 'false')
+            throw new Error('409');
+
+        next();
+
+    } catch (err) {
+        if (err.message == '403')
+            return res.status(403).json({error: true, message: "Vos droits d'accès ne permettent pas d'accéder à la ressource"}).end();
+
+        if (err.message == '409')
+            return res.status(409).json({error: true, message: "Une ou plusieurs données sont erronées"}).end();
+
+        return res.status(401).json({error: true, message: "Votre token n'est pas correct"}).end();
+    }
+}

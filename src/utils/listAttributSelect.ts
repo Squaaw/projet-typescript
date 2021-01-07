@@ -14,7 +14,7 @@ interface attributSelectInterface {
  const listAttributSelect: Record<listeTables, attributSelectInterface> = {
     "user": {
         primaryKey: `idUser`,
-        attribut: [`idUser`, `firstname`, `lastname`, `gender`, `idRole`, `birthdate`, `createdAt`, `updatedAt`, `subscription`]
+        attribut: [`idUser`, `firstname`, `lastname`, `gender`, `idRole`, `birthdate`, `createdAt`, `updatedAt`, `subscription`, `stripe_customerId`]
     },
     "account": {
         primaryKey: `idUser`,
@@ -39,7 +39,7 @@ interface attributSelectInterface {
     "song": {
         primaryKey: `idSong`,
         attribut: [`idSong`, `name`, `cover`, `time`, `createdAt`, `updatedAt`, `idType`]
-    }
+    },
 };
 
 export default listAttributSelect;

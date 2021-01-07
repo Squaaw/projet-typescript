@@ -13,10 +13,11 @@ export default class User{
     public createdAt: string;
     public updatedAt: string;
     public subscription: number;
+    stripe_customerId: string | null;
 
     protected table: string = 'user';
 
-    constructor(user: User | null, firstname: string = '', lastname: string = '', gender: string = '', idRole: number = 1, birthdate: string = '', createdAt: string = '', updatedAt: string = '', subscription: number = 0){
+    constructor(user: User | null, firstname: string = '', lastname: string = '', gender: string = '', idRole: number = 1, birthdate: string = '', createdAt: string = '', updatedAt: string = '', subscription: number = 0, stripe_customerId = null){
         if (user === null){
             this.firstname = firstname;
             this.lastname = lastname;
@@ -26,6 +27,7 @@ export default class User{
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
             this.subscription = subscription;
+            this.stripe_customerId = stripe_customerId;
         } else {
             this.idUser = user.id;
             this.firstname = user.firstname;
@@ -36,6 +38,7 @@ export default class User{
             this.createdAt = user.createdAt;
             this.updatedAt = user.updatedAt;
             this.subscription = user.subscription;
+            this.stripe_customerId = user.stripe_customerId;
         }
     }
 
@@ -75,8 +78,12 @@ export default class User{
         return <number>this.subscription;
     }
 
+    get customerId(): string{
+        return <string>this.stripe_customerId;
+    }
+
     get attributInsert(): Array <string> {
-        return ['firstname', 'lastname', 'gender', 'idRole', 'birthdate', 'createdAt', 'updatedAt', 'subscription']
+        return ['firstname', 'lastname', 'gender', 'idRole', 'birthdate', 'createdAt', 'updatedAt', 'subscription', 'stripe_customerId']
     }
 
     save(): Promise <number> {
