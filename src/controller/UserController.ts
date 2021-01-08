@@ -217,18 +217,6 @@ export class UserController {
 
     static addCard = async(req: Request, res: Response) => {
 
-        // // Charge a customer via the customer id
-        // await stripe.charges.create({
-        //         amount: 1499,
-        //         currency: 'eur',
-        //         customer: customer.id,
-        //          description: 'Abonnement Zoubify'
-        //     });
-
-        // charge.succeeded
-        // charge.failed
-
-    
         const data: any = req.body;
         const cardNumber: String = data.cartNumber;
         const month: number = data.month;

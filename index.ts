@@ -5,6 +5,7 @@ import cors from "cors";
 import { AuthentificationRoute } from "./src/routes/AuthentificationRoute";
 import { UserRoute } from "./src/routes/UserRoute";
 import { SongRoute } from "./src/routes/SongRoute";
+import { SubscriptionRoute } from "./src/routes/SubscriptionRoute";
 
 config();
 
@@ -15,6 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Main & authentification routes.
 app.use('/', AuthentificationRoute);
+
+// Subscription route.
+app.use('/subscription', SubscriptionRoute);
 
 // User routes.
 app.use('/user', UserRoute);
