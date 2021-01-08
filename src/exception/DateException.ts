@@ -17,4 +17,19 @@ export default class DateException extends Error{
 
         return currentDate;
     }
+
+    public static formatDateTime(date: Date): string{
+        const formatedDate = this.formatDate(date);
+        let hours = String(date.getHours());
+        let minutes = String(date.getMinutes());
+        let seconds = String(date.getSeconds());
+
+        const hh = (hours.toString().length == 1) ? '0' + hours : hours;
+        const mm = (minutes.toString().length == 1) ? '0' + minutes : minutes;
+        const ss = (seconds.toString().length == 1) ? '0' + seconds : seconds;
+
+        const time = hh + ':' + mm + ':' + ss;
+
+        return formatedDate + ' ' + time;
+    }
 }

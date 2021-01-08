@@ -1,4 +1,4 @@
-export type listeTables = "user" | "account" | "role" | "blacklist" | "child" | "type" | "song";
+export type listeTables = "user" | "account" | "role" | "blacklist" | "child" | "type" | "song" | "bill";
 
 interface attributSelectInterface {
     primaryKey: string;
@@ -40,6 +40,10 @@ interface attributSelectInterface {
         primaryKey: `idSong`,
         attribut: [`idSong`, `name`, `cover`, `time`, `createdAt`, `updatedAt`, `idType`]
     },
+    "bill": {
+        primaryKey: `idBill`,
+        attribut: [`idBill`, `id_Stripe`, `datePayment`, `montantHt`, `montantTtc`, `source`, `createdAt`, `updatedAt`, `idUser`]
+    }
 };
 
 export default listAttributSelect;

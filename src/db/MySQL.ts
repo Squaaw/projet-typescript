@@ -2,9 +2,9 @@ import { createConnection, Connection } from 'mysql';
 import listAttributSelect, { listeTables } from '../utils/listAttributSelect';
 import User from '../models/User';
 import Account from '../models/Account';
-import Role from '../models/Role';
 import Blacklist from '../models/Blacklist';
 import Child from '../models/Child';
+import Bill from '../models/Bill';
 
 export interface jointureInterface{
     type: 'LEFT'|'RIGHT'|'FULL'|'INNER';
@@ -210,7 +210,7 @@ export default class MySQL {
         })
     }
 
-    static insert(table: string, instance: User | Account | Blacklist | Child): Promise<number> {
+    static insert(table: string, instance: User | Account | Blacklist | Child | Bill): Promise<number> {
         return new Promise((resolve, reject) => {
         // return Promise because of the processing time of the database
         // The only way to get a return is using wether "resolve()" or "reject()"
