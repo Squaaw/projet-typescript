@@ -106,7 +106,7 @@ export default class Bill{
                 let data: Array<Bill> = [];
                 for (const bill of arrayBill) {
                     bill.datePayment = DateException.formatDateTime(bill.datePayment);
-                    bill.createdAt = DateException.formatDateTime(bill.createdAt);
+                    //bill.createdAt = DateException.formatDateTime(bill.createdAt);
                     bill.updatedAt = DateException.formatDateTime(bill.updatedAt);
                     bill.id = bill.idBill;
                     data.push(new Bill(bill));
@@ -120,5 +120,18 @@ export default class Bill{
                 reject(false);
             });
         })
+    }
+
+    static update(update: any, where: any) {
+        return new Promise((resolve, reject) => {
+            MySQL.update('bill', update, where).then(() => {
+                console.log("Updated successfully!");
+                resolve(true);
+            })
+            .catch((err: any) => {
+                console.log(err);
+                reject(false);
+            });
+        });
     }
 }
