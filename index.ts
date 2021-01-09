@@ -9,6 +9,7 @@ import { SubscriptionRoute } from "./src/routes/SubscriptionRoute";
 import { BillRoute } from "./src/routes/BillRoute";
 
 config();
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -30,8 +31,12 @@ app.use('/songs', SongRoute);
 // Bills route.
 app.use('/bill', BillRoute);
 
+// Allows the use of external ressources (css, js, images files...)
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('*', function(req, res){
-    return res.end('<h1>404! not found</h1>');
+    const indexPath = path.resolve("./404.html");
+    res.sendFile(indexPath);
   });
 
 app.listen(process.env.PORT, () => {
