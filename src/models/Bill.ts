@@ -13,10 +13,11 @@ export default class Bill{
     public createdAt: string;
     public updatedAt: string;
     public idUser: number;
+    public captured: number;
 
     protected table: string = 'bill';
 
-    constructor(bill: Bill | null, id_Stripe: string = '', datePayment: string = '', montantHt: number = 0, montantTtc: number = 0, source: string = '', createdAt: string = '', updatedAt: string = '', idUser: number = 0){
+    constructor(bill: Bill | null, id_Stripe: string = '', datePayment: string = '', montantHt: number = 0, montantTtc: number = 0, source: string = '', createdAt: string = '', updatedAt: string = '', idUser: number = 0, captured = 0){
         if (bill === null){
             this.id_Stripe = id_Stripe;
             this.datePayment = datePayment;
@@ -26,6 +27,7 @@ export default class Bill{
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
             this.idUser = idUser;
+            this.captured = captured;
         } else {
             this.idBill = bill.id;
             this.id_Stripe = bill.id_Stripe;
@@ -36,6 +38,7 @@ export default class Bill{
             this.createdAt = bill.createdAt;
             this.updatedAt = bill.updatedAt;
             this.idUser = bill.idUser;
+            this.captured = bill.captured;
         }
     }
 
@@ -75,8 +78,12 @@ export default class Bill{
         return <number>this.idUser;
     }
 
+    get isCaptured(): number{
+        return <number>this.captured;
+    }
+
     get attributInsert(): Array <string> {
-        return ['id_Stripe', 'datePayment', 'montantHt', 'montantTtc', 'source', 'createdAt', 'updatedAt', 'idUser']
+        return ['id_Stripe', 'datePayment', 'montantHt', 'montantTtc', 'source', 'createdAt', 'updatedAt', 'idUser', 'captured']
     }
 
     save(): Promise <number>{

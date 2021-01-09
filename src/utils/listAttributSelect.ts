@@ -42,7 +42,7 @@ interface attributSelectInterface {
     },
     "bill": {
         primaryKey: `idBill`,
-        attribut: [`idBill`, `id_Stripe`, `datePayment`, `montantHt`, `montantTtc`, `source`, `createdAt`, `updatedAt`, `idUser`]
+        attribut: [`idBill`, `id_Stripe`, `datePayment`, `montantHt`, `montantTtc`, `source`, `createdAt`, `updatedAt`, `idUser`, `captured`]
     }
 };
 

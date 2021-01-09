@@ -8,4 +8,5 @@ export interface BillInterface{
     createdAt: string;
     updatedAt: string;
     idUser: number;
+    capture: number;
 }
