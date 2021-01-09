@@ -28,6 +28,8 @@ CREATE TABLE `account` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `idUser` int(11) NOT NULL,
+  `attempts` int(1) NOT NULL,
+  `blockedAttemptsDate` datetime NOT NULL,
   PRIMARY KEY (`idUser`),
   KEY `fk_account_userid_idx` (`idUser`),
   CONSTRAINT `fk_account_userid` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -52,18 +54,19 @@ DROP TABLE IF EXISTS `bill`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bill` (
   `idBill` int(11) NOT NULL AUTO_INCREMENT,
-  `id_Stripe` int(11) NOT NULL,
-  `datePayment` date NOT NULL,
-  `montantHt` int(11) NOT NULL,
-  `montantTtc` int(11) NOT NULL,
+  `id_Stripe` varchar(255) NOT NULL,
+  `datePayment` datetime NOT NULL,
+  `montantHt` decimal(10,2) NOT NULL,
+  `montantTtc` decimal(10,2) NOT NULL,
   `source` varchar(6) NOT NULL,
-  `createdAt` date NOT NULL,
-  `updatedAt` date NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
   `idUser` int(11) NOT NULL,
+  `captured` tinyint(4) NOT NULL,
   PRIMARY KEY (`idBill`),
   KEY `fk_bill_userid_idx` (`idUser`),
   CONSTRAINT `fk_bill_userid` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,32 +79,26 @@ LOCK TABLES `bill` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `card`
+-- Table structure for table `blacklist`
 --
 
-DROP TABLE IF EXISTS `card`;
+DROP TABLE IF EXISTS `blacklist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `card` (
-  `idCard` int(11) NOT NULL AUTO_INCREMENT,
-  `cartNumber` varchar(16) NOT NULL,
-  `month` varchar(2) NOT NULL,
-  `year` varchar(4) NOT NULL,
-  `default` tinyint(4) NOT NULL,
-  `idUser` int(11) NOT NULL,
-  PRIMARY KEY (`idCard`),
-  KEY `fk_card_userid_idx` (`idUser`),
-  CONSTRAINT `fk_card_userid` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `blacklist` (
+  `idToken` int(11) NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) NOT NULL,
+  PRIMARY KEY (`idToken`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `card`
+-- Dumping data for table `blacklist`
 --
 
-LOCK TABLES `card` WRITE;
-/*!40000 ALTER TABLE `card` DISABLE KEYS */;
-/*!40000 ALTER TABLE `card` ENABLE KEYS */;
+LOCK TABLES `blacklist` WRITE;
+/*!40000 ALTER TABLE `blacklist` DISABLE KEYS */;
+/*!40000 ALTER TABLE `blacklist` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -112,8 +109,8 @@ DROP TABLE IF EXISTS `child`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `child` (
-  `tutor_id` int(11) NOT NULL,
   `child_id` int(11) NOT NULL,
+  `tutor_id` int(11) NOT NULL,
   PRIMARY KEY (`child_id`),
   KEY `fk_child_iduserchild_idx` (`child_id`),
   KEY `fk_child_tutorid_idx` (`tutor_id`),
@@ -165,7 +162,6 @@ DROP TABLE IF EXISTS `song`;
 CREATE TABLE `song` (
   `idSong` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `url` varchar(255) NOT NULL,
   `cover` varchar(255) DEFAULT NULL,
   `time` int(11) NOT NULL,
   `createdAt` date NOT NULL,
@@ -174,7 +170,7 @@ CREATE TABLE `song` (
   PRIMARY KEY (`idSong`),
   KEY `fk_song_idtype_idx` (`idType`),
   CONSTRAINT `fk_song_idtype` FOREIGN KEY (`idType`) REFERENCES `type` (`idType`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,6 +179,7 @@ CREATE TABLE `song` (
 
 LOCK TABLES `song` WRITE;
 /*!40000 ALTER TABLE `song` DISABLE KEYS */;
+INSERT INTO `song` VALUES (1,'Numb - Linkin Park','https://upload.wikimedia.org/wikipedia/en/b/b9/Linkin_Park_-_Numb_CD_cover.jpg',187,'2021-01-06','2021-01-06',1),(2,'Pitbull - Booba','https://images-na.ssl-images-amazon.com/images/I/51sEq2PdPFL.jpg',229,'2021-01-06','2021-01-06',2);
 /*!40000 ALTER TABLE `song` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +194,7 @@ CREATE TABLE `type` (
   `idType` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   PRIMARY KEY (`idType`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,6 +203,7 @@ CREATE TABLE `type` (
 
 LOCK TABLES `type` WRITE;
 /*!40000 ALTER TABLE `type` DISABLE KEYS */;
+INSERT INTO `type` VALUES (1,'Rock'),(2,'Rap');
 /*!40000 ALTER TABLE `type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,10 +224,11 @@ CREATE TABLE `user` (
   `createdAt` date NOT NULL,
   `updatedAt` date NOT NULL,
   `subscription` tinyint(4) NOT NULL,
+  `stripe_customerId` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`idUser`),
   KEY `fk_user_role_idx` (`idRole`),
   CONSTRAINT `fk_user_role` FOREIGN KEY (`idRole`) REFERENCES `role` (`idRole`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -250,4 +249,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-04 11:04:47
+-- Dump completed on 2021-01-09  6:18:16
