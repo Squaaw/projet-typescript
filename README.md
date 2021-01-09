@@ -10,6 +10,7 @@ yarn add body-parser
 yarn add cors
 yarn add jsonwebtoken
 yarn add stripe
+yarn add nodemailer
 
 # Dependence dev
 yarn add typescript @types/express ts-node --dev
@@ -20,6 +21,7 @@ yarn add @types/body-parser --dev
 yarn add @types/cors --dev
 yarn add @types/jsonwebtoken --dev
 yarn add @types/stripe --dev
+yarn add@types/nodemailer --dev
 
 # Global
 npm i nodemon pm2 -g
