@@ -45,8 +45,8 @@ const isSubscriptionValid = async(userId: number): Promise<boolean> => {
         }
     }
 
-    // If end trial date has been reached (after 7 days), charge the user on the card used to purchase the subscription.
-    if (trialDays >= 7)
+    // If end trial date has been reached (after 1 day for testing), charge the user on the card used to purchase the subscription.
+    if (trialDays >= 1)
         result = await capturePayment(chargeId, userMail, tutorId, child);
     
     return result;

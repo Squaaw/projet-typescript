@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
+import DateException from '../exception/DateException';
 import TokenException from '../exception/TokenException';
 import Bill from '../models/Bill';
 
@@ -23,7 +24,7 @@ export class BillController {
                     montant_ht: bills[i].montantHt,
                     montant_ttc: bills[i].montantTtc,
                     source: bills[i].source,
-                    createdAt: bills[i].createdAt,
+                    createdAt: DateException.formatDateTime(bills[i].createdAt),
                     updatedAt: bills[i].updatedAt
                 }
                 billsData.push(bill);

@@ -10,14 +10,17 @@ export default class EmailException extends Error{
 
     static sendMail(email: string, subject: string, message: string){
         var nodemailer = require('nodemailer');
+        const service = <string>process.env.EMAIL_SERVICE;
+        const user = <string>process.env.EMAIL_USER;
+        const pass = <string>process.env.EMAIL_PASS;
 
         var transporter = nodemailer.createTransport({
-        service: 'FastMail',
-        auth: {
-            user: 'zoubida@fastmail.com',
-            pass: 'pt4zusbdlhtgd7ld' // App-Password provided by fastmail in order to be used in third-party apps
-        }
-        });
+            service: service,
+            auth: {
+                user: user,
+                pass: pass
+            }
+            });
 
         var mailOptions = {
         from: 'zoubida@fastmail.com',
