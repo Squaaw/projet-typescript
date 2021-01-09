@@ -5,6 +5,8 @@ import { decode, sign } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import Role from "../models/Role";
 import DateException from "../exception/DateException";
+import EmailException from "../exception/EmailException";
+import Song from "../models/Song";
 
 export class AuthController {
     static register = async(req: Request, res: Response) => {
@@ -26,6 +28,14 @@ export class AuthController {
             const password = await PasswordException.hashPassword(data.password);
             const account = new Account(user, data.email, password, 0, today);
             await account.save();
+
+            const songs: any = await Song.selectAll();
+            const titre = (songs.length > 0) ? 'titres' : 'titre';
+            let message = `Bienvenue, ${user.firstname}\n`;
+            message += `Merci de faire partie de notre communauté ! Nous espérons que vous y trouverez votre bonheur parmi nos ${songs.length} ${titre} ;)`;
+            
+            // Sending confirmation mail
+            EmailException.sendMail(account.email, "Confirmation d'inscription", message)
 
             // Get the role's name from the ID
             const role: any = await Role.select({ idRole: user.idRole});
@@ -89,17 +99,22 @@ export class AuthController {
                 nbTentatives++;
                 Account.update({ attempts: nbTentatives}, {idUser: userId});
 
-                // After 5 connection attempts, set the current date and time when it occured.
-                if (nbTentatives == 5)
+                // After 5 connection attempts, set the current date and time when it occured. Also send an email in case of forgotten password.
+                if (nbTentatives == 5){
                     Account.update({ blockedAttemptsDate: new Date()}, {idUser: userId});
+
+                    const message = "Vous avez tenté de vous connecter à votre compte, mais en vain. Avez-vous oublié votre mot de passe ? Un délai d'attente de 2 minutes est nécessaire afin de pouvoir vous connecter à nouveau.";
+                    
+                    // Sending forgotten password mail
+                    EmailException.sendMail(account[0].email, "Tentatives de connexion erronées", message)
+                }
 
                 throw new Error('400');
             }
 
             // At this step, all provided informations were correct, then reset the amount of attempts to 0.
-            if (nbTentatives > 0){
+            if (nbTentatives > 0)
                 Account.update({ attempts: 0}, {idUser: userId});
-            }
 
             const theToken: any = await sign({ id: userId, firstname: account[0].firstname }, <string>process.env.JWT_KEY, {expiresIn: '5m'});
 
