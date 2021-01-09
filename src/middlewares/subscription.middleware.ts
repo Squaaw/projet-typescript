@@ -25,6 +25,18 @@ export const subscriptionMidd = async(req: Request, res: Response, next: () => v
         if (!user[0].stripe_customerId)
             throw new Error('wrongCard');
 
+        const SECRET_KEY = <string>process.env.STRIPE_SECRET_KEY;   
+        const stripe = require('stripe')(SECRET_KEY);
+
+        const cards: any = await stripe.customers.listSources(
+            user[0].stripe_customerId,
+            {object: 'card'}
+        );
+
+        // If no card was found on an existing account
+        if (cards.data.length == 0)
+            throw new Error('wrongCard');
+
         next();
 
     } catch(err) {
