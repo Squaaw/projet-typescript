@@ -6,6 +6,7 @@ import { AuthentificationRoute } from "./src/routes/AuthentificationRoute";
 import { UserRoute } from "./src/routes/UserRoute";
 import { SongRoute } from "./src/routes/SongRoute";
 import { SubscriptionRoute } from "./src/routes/SubscriptionRoute";
+import { BillRoute } from "./src/routes/BillRoute";
 
 config();
 
@@ -25,6 +26,9 @@ app.use('/user', UserRoute);
 
 // Songs routes.
 app.use('/songs', SongRoute);
+
+// Bills route.
+app.use('/bill', BillRoute);
 
 app.get('*', function(req, res){
     return res.end('<h1>404! not found</h1>');
