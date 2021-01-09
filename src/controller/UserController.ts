@@ -23,6 +23,7 @@ export class UserController {
     
             const userId = token.id;
             let updated = false;
+            const currentDate = DateException.formatDateTime(new Date());
     
             // Since data are optionals, it is necessary to check which values are received in order to prevent updating empty fields.
     
@@ -48,7 +49,7 @@ export class UserController {
     
             // Set 'updatedAt' field with current date
             if (updated)
-                User.update({ updatedAt: DateException.formatDate(new Date())}, {idUser: userId});
+                User.update({ updatedAt: currentDate }, {idUser: userId});
     
             return res.status(200).json({error: false, message: "Vos données ont été mises à jour"});
     
@@ -291,9 +292,12 @@ export class UserController {
                     email: userMail
                 };
 
+                const currentDate = DateException.formatDateTime(new Date());
+
                 // Create a new stripe user
                 const customer: Stripe.Customer = await stripe.customers.create(params);
                 User.update({ stripe_customerId: customer.id}, {idUser: userId });
+                User.update({ updatedAt: currentDate}, { idUser: userId });
             }
 
             return res.status(200).json({ error: false, message: "Vos données ont été mises à jour" });

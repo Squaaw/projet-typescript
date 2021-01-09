@@ -56,17 +56,16 @@ export class SubscriptionController {
             await bill.save();
 
             // Update tutor's and children subscription
-            await User.update({ subscription: 1}, {idUser: userId });
+            User.update({ subscription: 1}, { idUser: userId });
+            User.update({ updatedAt: currentDate }, { idUser: userId });
             const children: any = await Child.select({ tutor_id: userId });
 
             for (let i = 0; i < children.length; i++){
                 User.update({ subscription: 1}, { idUser: children[i].child_id });
+                User.update({ updatedAt: currentDate }, { idUser: children[i].child_id });
             }
 
             return res.status(200).json({error: false, message: successMessage });
-
-            // lors du login ou lors de l'accès aux songs, check si l'utilisateur est abonné. Si oui, check s'il a une facture WHERE captured = 0. Si oui, dateDuJour - datePayment => si >= 7 jours alors charges.capture
-            //await stripe.charges.capture('ch_1I7TweCyHHLSevGTmk9kSt3Y');
 
         } catch (err){
 
